@@ -31,4 +31,17 @@ int main(int argc, char *argv[]){
 	
 }
 
+void * funcion_hilo(void *arg1,void *arg2){
+
+	int inicial = (long)arg1;
+	int final = (long)arg2;
+
+	int i = 0;
+	for(i = argumento - 1; i >= 0; i--){
+		sleep(1);		//duerme 1 segundo a la vez
+		printf("Hilo 1: faltan %d segundos para terminar\n", i);	
+	}
+
+	return (void *)0;		//tenemos que devolver algo
+}
 

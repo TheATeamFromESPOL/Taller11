@@ -14,8 +14,8 @@ int aleatorio(int min,int max){
 double obtenerTiepoActual(){
 	struct timespec tsp;
 	clock_gettime(CLOCK_REALTIME,&tsp);
-	double secs = ();
-	double nano = ();
+	double secs = (double)tsp.tv_sec;
+	double nano = (double)tsp.tv_nsec / 1000000000.0;
 	return secs + nano;
 }
 
@@ -28,9 +28,23 @@ int main(int argc, char *argv[]){
 	int nHilos = atoi(argv[2]);
 	int *arreglo;
 	arreglo = (int*)malloc(tamanio*sizeof(int));
-	pthread_t * hilos;
-	hilos=(pthread_t*)malloc(nhilos*sizeof(pthread_t));
 	
+	pthread_t * hilos;
+	hilos=(pthread_t*)malloc(nHilos*sizeof(pthread_t));
+	
+	//Creacion de arreglo
+	int i;
+	for(i=0; i<tamanio; i++){
+	  arreglo[i]=aleatorio(50,100);
+	  printf("%i\n",arreglo[i]);
+	}
+	
+	//Creaccion de hilos
+	for(i=0;i<nHilos;i++){
+	  hilos[i] = p_thread(
+	}
+	
+	return 0;
 }
 
 void * funcion_hilo(void *arg1,void *arg2){
@@ -39,9 +53,9 @@ void * funcion_hilo(void *arg1,void *arg2){
 	int final = (long)arg2;
 
 	int i = 0;
-	for(i = argumento - 1; i >= 0; i--){
-		sleep(1);		//duerme 1 segundo a la vez
-		printf("Hilo 1: faltan %d segundos para terminar\n", i);	
+	for(i = inicial; i <= final; i++){
+		sleep(1);
+		
 	}
 
 	return (void *)0;		//tenemos que devolver algo

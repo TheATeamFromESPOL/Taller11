@@ -3,9 +3,10 @@
 #include <stdlib.h>
 #include <sys/time.h>
 #include <pthread.h>
-
+ 
 int aleatorio(int min,int max);
 double obtenerTiepoActual();
+void * funcion_hilo(void *arg1,void *arg2);
 
 int aleatorio(int min,int max){
 	return(rand()%(max-min+1))+min;
@@ -18,6 +19,21 @@ double obtenerTiepoActual(){
 	double nano = (double)tsp.tv_nsec / 1000000000.0;
 	return secs + nano;
 }
+
+/*
+void * funcion_hilo(void *arg1,void *arg2){
+
+	int inicial = (long)arg1;
+	int final = (long)arg2;
+
+	int i = 0;
+	for(i = inicial; i < final; i++){
+		sleep(1);
+	}
+
+	return (void *)0;	
+}
+*/
 
 int main(int argc, char *argv[]){
 	if (argc!=3){
@@ -40,24 +56,29 @@ int main(int argc, char *argv[]){
 	}
 	
 	//Creaccion de hilos
+	int ini,fin,ent;
+	double div;
+	int mod;
+	div = tamanio/nHilos;
+	mod = tamanio%nHilos;
+	ent = (int)div;
+	if(mod!=0){	
+	  ent+=1;
+	}
 	for(i=0;i<nHilos;i++){
-	  hilos[i] = p_thread(
+	  ini = ent*i;
+	  if(i==(nHilos-1)){
+	    fin=tamanio;
+	  }
+	  else{
+	    fin = ent*(i+1);
+    }
+	  //p_thread(&hilos[i], NULL, funcion_hilo(nHilos*i,nHilos*(i+1),NULL);
+	  printf("Inicio: %i    Fin: %i\n",ini,fin);
 	}
 	
 	return 0;
 }
 
-void * funcion_hilo(void *arg1,void *arg2){
 
-	int inicial = (long)arg1;
-	int final = (long)arg2;
-
-	int i = 0;
-	for(i = inicial; i <= final; i++){
-		sleep(1);
-		
-	}
-
-	return (void *)0;		//tenemos que devolver algo
-}
 

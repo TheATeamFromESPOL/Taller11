@@ -28,6 +28,8 @@ int main(int argc, char *argv[]){
 	int nHilos = atoi(argv[2]);
 	int *arreglo;
 	arreglo = (int*)malloc(tamanio*sizeof(int));
+	pthread_t * hilos;
+	hilos=(pthread_t*)malloc(nhilos*sizeof(pthread_t));
 	
 }
 

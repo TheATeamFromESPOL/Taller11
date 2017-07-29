@@ -3,10 +3,20 @@
 #include <stdlib.h>
 #include <sys/time.h>
 #include <pthread.h>
- 
+
+//Definición estructura
+typedef struct estructuraTaller11{
+	
+	int inicio;
+	int final;
+	int *arreglo;
+
+}parametros;
+
+//Definición funciones
 int aleatorio(int min,int max);
 double obtenerTiepoActual();
-void * funcion_hilo(void *arg1,void *arg2);
+void * funcion_hilo(void *estructura);
 
 int aleatorio(int min,int max){
 	return(rand()%(max-min+1))+min;
@@ -20,24 +30,26 @@ double obtenerTiepoActual(){
 	return secs + nano;
 }
 
-/*
-void * funcion_hilo(void *arg1,void *arg2){
-
-	int inicial = (long)arg1;
-	int final = (long)arg2;
+void * funcion_hilo(void *estructura){
+	
+	parametros *param = (parametros *)estructura;
+	int ini = param->inicio;
+	int fin = param->final;
+	int *arreglo = param->arreglo; 
 
 	int i = 0;
-	for(i = inicial; i < final; i++){
-		sleep(1);
+	long suma = 0;
+	for(i = ini; i < fin; i++){
+		suma += *(arreglo+i);
 	}
 
-	return (void *)0;	
+	return (void *)suma;	
 }
-*/
+
 
 int main(int argc, char *argv[]){
 	if (argc!=3){
-		printf("%s\n","ingrese correctamente los argumentos");
+		printf("%s\n","Ingrese correctamente los argumentos");
 		return 0;
 	}
 	int tamanio = atoi(argv[1]);
@@ -51,30 +63,29 @@ int main(int argc, char *argv[]){
 	//Creacion de arreglo
 	int i;
 	for(i=0; i<tamanio; i++){
-	  arreglo[i]=aleatorio(50,100);
-	  printf("%i\n",arreglo[i]);
+	  arreglo[i]=aleatorio(1,10);
 	}
 	
 	//Creaccion de hilos
-	int ini,fin,ent;
-	double div;
-	int mod;
-	div = tamanio/nHilos;
-	mod = tamanio%nHilos;
-	ent = (int)div;
-	if(mod!=0){	
-	  ent+=1;
-	}
+	int ini,fin,div;
+	div = (int)tamanio/nHilos;
+	//--printf("div: %i  mod: %i\n",div,mod);	
 	for(i=0;i<nHilos;i++){
-	  ini = ent*i;
-	  if(i==(nHilos-1)){
-	    fin=tamanio;
-	  }
-	  else{
-	    fin = ent*(i+1);
-    }
-	  //p_thread(&hilos[i], NULL, funcion_hilo(nHilos*i,nHilos*(i+1),NULL);
-	  printf("Inicio: %i    Fin: %i\n",ini,fin);
+		ini=div*i;
+		if(i!=(nHilos-1))
+			fin=div*(i+1);
+		else
+			fin=tamanio;
+	 	//--printf("Inicio: %i    Fin: %i\n",ini,fin);
+
+		//Creacion estructura con parámetros
+		parametros *param = (parametros *)malloc(sizeof(parametros *));
+		param->inicio = ini;
+		param->final = fin;
+		param->arreglo = arreglo;
+		
+		//Creacion del hilo con proceso a ejecutar
+	  int hilo = pthread_create(&hilos[i], NULL, funcion_hilo,(void *)param);
 	}
 	
 	return 0;

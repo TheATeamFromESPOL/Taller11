@@ -4,6 +4,9 @@
 #include <sys/time.h>
 #include <pthread.h>
 
+//Variable global para la suma
+int suma = 0;
+
 //Definición estructura
 typedef struct estructuraTaller11{
 	
@@ -38,12 +41,14 @@ void * funcion_hilo(void *estructura){
 	int *arreglo = param->arreglo; 
 
 	int i = 0;
-	long suma = 0;
+	long hue = 0;
 	for(i = ini; i < fin; i++){
-		suma += *(arreglo+i);
+		hue += *(arreglo+i);
 	}
 
-	return (void *)suma;	
+	suma += hue;
+
+	return (void *)hue;	
 }
 
 
@@ -64,7 +69,9 @@ int main(int argc, char *argv[]){
 	int i;
 	for(i=0; i<tamanio; i++){
 	  arreglo[i]=aleatorio(1,10);
+		//--printf("%i\n",arreglo[i]);
 	}
+	//--printf("\n");
 	
 	//Creaccion de hilos
 	int ini,fin,div;
@@ -86,8 +93,13 @@ int main(int argc, char *argv[]){
 		
 		//Creacion del hilo con proceso a ejecutar
 	  int hilo = pthread_create(&hilos[i], NULL, funcion_hilo,(void *)param);
+		if(hilo<0){
+			printf("Error creando hilo.");
+			return 0;
+		}
 	}
 	
+	printf("Suma total de componentes en el arreglo: %i\n",suma);
 	return 0;
 }
 

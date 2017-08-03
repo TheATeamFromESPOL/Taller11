@@ -4,9 +4,6 @@
 #include <sys/time.h>
 #include <pthread.h>
 
-//Variable global para la suma
-int suma = 0;
-
 //Definición estructura
 typedef struct estructuraTaller11{
 	
@@ -18,14 +15,14 @@ typedef struct estructuraTaller11{
 
 //Definición funciones
 int aleatorio(int min,int max);
-double obtenerTiepoActual();
+double obtenerTiempoActual();
 void * funcion_hilo(void *estructura);
 
 int aleatorio(int min,int max){
 	return(rand()%(max-min+1))+min;
 }
 
-double obtenerTiepoActual(){
+double obtenerTiempoActual(){
 	struct timespec tsp;
 	clock_gettime(CLOCK_REALTIME,&tsp);
 	double secs = (double)tsp.tv_sec;
@@ -43,11 +40,8 @@ void * funcion_hilo(void *estructura){
 	int i = 0;
 	long hue = 0;
 	for(i = ini; i < fin; i++){
-		hue += *(arreglo+i);
+		hue += arreglo[i];
 	}
-
-	suma += hue;
-
 	return (void *)hue;	
 }
 
@@ -57,6 +51,10 @@ int main(int argc, char *argv[]){
 		printf("%s\n","Ingrese correctamente los argumentos");
 		return 0;
 	}
+	double tiempoInicial = obtenerTiempoActual();
+	srand(time(NULL));
+
+	long suma = 0;
 	int tamanio = atoi(argv[1]);
 	int nHilos = atoi(argv[2]);
 	int *arreglo;
@@ -68,8 +66,8 @@ int main(int argc, char *argv[]){
 	//Creacion de arreglo
 	int i;
 	for(i=0; i<tamanio; i++){
-	  arreglo[i]=aleatorio(1,10);
-		//--printf("%i\n",arreglo[i]);
+		int r=aleatorio(1,10);
+		arreglo[i]=r;
 	}
 	//--printf("\n");
 	
@@ -83,8 +81,6 @@ int main(int argc, char *argv[]){
 			fin=div*(i+1);
 		else
 			fin=tamanio;
-	 	//--printf("Inicio: %i    Fin: %i\n",ini,fin);
-
 		//Creacion estructura con parámetros
 		parametros *param = (parametros *)malloc(sizeof(parametros *));
 		param->inicio = ini;
@@ -98,8 +94,15 @@ int main(int argc, char *argv[]){
 			return 0;
 		}
 	}
+	for(i=0;i<nHilos;i++){
+		void * sumaHilo = malloc(sizeof(long));
+		pthread_join(hilos[i],sumaHilo);
+		suma += *((long*) sumaHilo); 
+	}
+	double tiempoFinal = obtenerTiempoActual();
+	printf("Suma total de componentes en el arreglo: %li\n",suma);
+	printf("Al usar %d hilos\nSe hizo un tiempo de %f \n ",nHilos,tiempoFinal-tiempoInicial);
 	
-	printf("Suma total de componentes en el arreglo: %i\n",suma);
 	return 0;
 }
 

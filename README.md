@@ -1,3 +1,3 @@
 # Taller11
-. Lucio Arias
-. Luis Arizaga
+- Lucio Arias
+- Luis Arizaga
